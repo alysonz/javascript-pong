@@ -19,7 +19,7 @@ if (!Function.prototype.bind) {
         self  = this,
         nop   = function () {},
         bound = function () {
-          return self.apply(this instanceof nop ? this : (obj || {}), args.concat(slice.call(arguments)));   
+          return self.apply(this instanceof nop ? this : (obj || {}), args.concat(slice.call(arguments)));
         };
     nop.prototype   = self.prototype;
     bound.prototype = new nop();
@@ -56,10 +56,10 @@ if (!Object.extend) {
 
 /* NOT READY FOR PRIME TIME
 if (!window.requestAnimationFrame) {// http://paulirish.com/2011/requestanimationframe-for-smart-animating/
-  window.requestAnimationFrame = window.webkitRequestAnimationFrame || 
-                                 window.mozRequestAnimationFrame    || 
-                                 window.oRequestAnimationFrame      || 
-                                 window.msRequestAnimationFrame     || 
+  window.requestAnimationFrame = window.webkitRequestAnimationFrame ||
+                                 window.mozRequestAnimationFrame    ||
+                                 window.oRequestAnimationFrame      ||
+                                 window.msRequestAnimationFrame     ||
                                  function(callback, element) {
                                    window.setTimeout(callback, 1000 / 60);
                                  }
@@ -100,7 +100,7 @@ Game = {
     } catch (e) {}
 
     return {
-      full:      ua, 
+      full:      ua,
       name:      key + (version ? " " + version.toString() : ""),
       version:   version,
       isFirefox: (key == "firefox"),
@@ -156,7 +156,7 @@ Game = {
     return (min + (Math.random() * (max - min)));
   },
 
-  timestamp: function() { 
+  timestamp: function() {
     return new Date().getTime();
   },
 
@@ -206,7 +206,6 @@ Game = {
       this.front2d      = this.front.getContext('2d');
       this.back2d       = this.back.getContext('2d');
       this.addEvents();
-      this.resetStats();
 
       this.game = Object.construct(game, this, this.cfg); // finally construct the game object itself
     },
@@ -224,7 +223,6 @@ Game = {
       var start  = Game.timestamp(); this.update((start - this.lastFrame)/1000.0); // send dt as seconds
       var middle = Game.timestamp(); this.draw();
       var end    = Game.timestamp();
-      this.updateStats(middle - start, end - middle);
       this.lastFrame = start;
     },
 
@@ -235,40 +233,8 @@ Game = {
     draw: function() {
       this.back2d.clearRect(0, 0, this.width, this.height);
       this.game.draw(this.back2d);
-      this.drawStats(this.back2d);
       this.front2d.clearRect(0, 0, this.width, this.height);
       this.front2d.drawImage(this.back, 0, 0);
-    },
-
-    resetStats: function() {
-      this.stats = {
-        count:  0,
-        fps:    0,
-        update: 0,
-        draw:   0, 
-        frame:  0  // update + draw
-      };
-    },
-
-    updateStats: function(update, draw) {
-      if (this.cfg.stats) {
-        this.stats.update = Math.max(1, update);
-        this.stats.draw   = Math.max(1, draw);
-        this.stats.frame  = this.stats.update + this.stats.draw;
-        this.stats.count  = this.stats.count == this.fps ? 0 : this.stats.count + 1;
-        this.stats.fps    = Math.min(this.fps, 1000 / this.stats.frame);
-      }
-    },
-
-    drawStats: function(ctx) {
-      if (this.cfg.stats) {
-        ctx.fillStyle = 'white';
-        ctx.font = '9pt sans-serif';
-        ctx.fillText("frame: "  + this.stats.count,         this.width - 100, this.height - 75);
-        ctx.fillText("fps: "    + this.stats.fps,           this.width - 100, this.height - 60);
-        ctx.fillText("update: " + this.stats.update + "ms", this.width - 100, this.height - 45);
-        ctx.fillText("draw: "   + this.stats.draw   + "ms", this.width - 100, this.height - 30);
-      }
     },
 
     addEvents: function() {
